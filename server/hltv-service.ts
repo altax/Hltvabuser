@@ -1,4 +1,4 @@
-import HLTV from "hltv";
+import { HLTV } from "hltv";
 import { storage } from "./storage";
 import type { InsertTeam, InsertPlayer, InsertMatch, InsertDataCollectionJob } from "@shared/schema";
 
@@ -50,7 +50,10 @@ export async function fetchTop30Teams(): Promise<InsertTeam[]> {
 
         teams.push(team);
 
-        // Also fetch and store players
+        // First create the team (must exist before players due to foreign key)
+        await storage.createTeam(team);
+
+        // Then fetch and store players
         if (teamData.players) {
           for (const playerData of teamData.players) {
             const playerId = playerData.id as number;
@@ -66,8 +69,6 @@ export async function fetchTop30Teams(): Promise<InsertTeam[]> {
             await storage.createPlayer(player);
           }
         }
-
-        await storage.createTeam(team);
         console.log(`Fetched team: ${team.name} (rank #${team.rank})`);
       } catch (teamError) {
         console.error(`Error fetching team ${teamRanking.team.name}:`, teamError);
