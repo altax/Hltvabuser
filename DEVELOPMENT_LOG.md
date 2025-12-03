@@ -26,10 +26,14 @@
 **Bug Fixes Made:**
 1. `server/hltv-service.ts` line 1: Changed import from default to named export
 2. `server/hltv-service.ts` lines 54-74: Moved `storage.createTeam(team)` before player creation loop
+3. `server/hltv-service.ts` lines 137-156: Fixed team ID lookup - HLTV API returns only team name/logo, not ID. Added lookup by team name from database
+4. `server/storage.ts`: Added `getTeamByName(name: string)` method to find teams by name
 
 **Data in Database:**
 - 19 teams loaded (ranks 1-19): FURIA, Vitality, Falcons, MOUZ, The MongolZ, Spirit, Natus Vincere, G2, Aurora, paiN, Astralis, FaZe, 3DMAX, Legacy, Liquid, B8, GamerLegion, HEROIC, Virtus.pro
+- 50 matches for FURIA collected with correct team_id associations
 - Remaining 11 teams (ranks 20-30) need to be fetched
+- Remaining 18 teams need match collection
 
 **Current State:**
 - Backend: Express server running with HLTV integration (FIXED)

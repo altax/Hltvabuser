@@ -131,9 +131,26 @@ export async function fetchTeamMatches(teamId: number, limit: number = 50): Prom
         try {
           await delay(2000);
 
-          // Get team IDs safely
-          const team1Id = (result.team1 as any)?.id ?? null;
-          const team2Id = (result.team2 as any)?.id ?? null;
+          // Get team names from HLTV response
+          const team1Name = typeof result.team1 === 'object' && result.team1 !== null 
+            ? (result.team1 as any).name 
+            : null;
+          const team2Name = typeof result.team2 === 'object' && result.team2 !== null 
+            ? (result.team2 as any).name 
+            : null;
+
+          // Look up team IDs from our database by name
+          let team1Id: number | null = null;
+          let team2Id: number | null = null;
+          
+          if (team1Name) {
+            const team1 = await storage.getTeamByName(team1Name);
+            team1Id = team1?.id ?? null;
+          }
+          if (team2Name) {
+            const team2 = await storage.getTeamByName(team2Name);
+            team2Id = team2?.id ?? null;
+          }
 
           // Create match record
           const match: InsertMatch = {
